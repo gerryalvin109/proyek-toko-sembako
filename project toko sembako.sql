@@ -415,4 +415,76 @@ SELECT * FROM v_vendor_aktif;
 SELECT * FROM v_barang_all;      
 SELECT * FROM v_barang_aktif;    
 SELECT * FROM v_margin_all;      
-SELECT * FROM v_margin_aktif;    
+SELECT * FROM v_margin_aktif;  
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS fn_cek_stok_barang$$
+CREATE FUNCTION fn_cek_stok_barang(p_idbarang INT) 
+RETURNS INT
+DETERMINISTIC
+READS SQL DATA
+BEGIN
+    DECLARE v_stok INT DEFAULT 0;
+
+    SELECT stock INTO v_stok
+    FROM kartu_stok
+    WHERE idbarang = p_idbarang
+    ORDER BY idkartu_stok DESC
+    LIMIT 1;
+
+    RETURN COALESCE(v_stok, 0);
+END$$
+
+DROP TRIGGER IF EXISTS trg_after_insert_detail_penerimaan$$
+CREATE TRIGGER trg_after_insert_detail_penerimaan
+AFTER INSERT ON detail_penerimaan
+FOR EACH ROW
+BEGIN
+    DECLARE v_stok_lama INT DEFAULT 0;
+    DECLARE v_stok_baru INT DEFAULT 0;
+
+    SET v_stok_lama = fn_cek_stok_barang(NEW.barang_idbarang);
+    
+    SET v_stok_baru = v_stok_lama + NEW.jumlah_terima;
+
+    INSERT INTO kartu_stok (jenis_transaksi, masuk, keluar, stock, created_at, idtransaksi, idbarang)
+    VALUES ('M', NEW.jumlah_terima, 0, v_stok_baru, CURRENT_TIMESTAMP, NEW.idpenerimaan, NEW.barang_idbarang);
+END$$
+
+DROP PROCEDURE IF EXISTS sp_catat_penerimaan_barang$$
+CREATE PROCEDURE sp_catat_penerimaan_barang(
+    IN p_idvendor INT,
+    IN p_iduser INT,
+    IN p_idbarang INT,
+    IN p_jumlah INT
+)
+BEGIN
+    DECLARE v_harga INT DEFAULT 0;
+    DECLARE v_subtotal INT DEFAULT 0;
+    DECLARE v_ppn INT DEFAULT 0;
+    DECLARE v_total INT DEFAULT 0;
+    DECLARE v_idpengadaan BIGINT;
+    DECLARE v_idpenerimaan BIGINT;
+
+    SELECT harga INTO v_harga FROM barang WHERE idbarang = p_idbarang;
+    SET v_subtotal = v_harga * p_jumlah;
+    SET v_ppn = ROUND(v_subtotal * 0.10);
+    SET v_total = v_subtotal + v_ppn;
+
+    INSERT INTO pengadaan (timestamp, user_iduser, status, vendor_idvendor, subtotal_nilai, ppn, total_nilai)
+    VALUES (CURRENT_TIMESTAMP, p_iduser, 'S', p_idvendor, v_subtotal, v_ppn, v_total);
+    SET v_idpengadaan = LAST_INSERT_ID();
+
+    INSERT INTO detail_pengadaan (harga_satuan, jumlah, sub_total, idbarang, idpengadaan)
+    VALUES (v_harga, p_jumlah, v_subtotal, p_idbarang, v_idpengadaan);
+
+    INSERT INTO penerimaan (created_at, status, idpengadaan, iduser)
+    VALUES (CURRENT_TIMESTAMP, '1', v_idpengadaan, p_iduser);
+    SET v_idpenerimaan = LAST_INSERT_ID();
+
+    INSERT INTO detail_penerimaan (idpenerimaan, barang_idbarang, jumlah_terima, harga_satuan_terima, sub_total_terima)
+    VALUES (v_idpenerimaan, p_idbarang, p_jumlah, v_harga, v_subtotal);
+END$$
+
+DELIMITER ;  
