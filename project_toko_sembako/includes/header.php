@@ -5,11 +5,11 @@ cek_login();
 
 $page_title  = $page_title ?? 'Toko Sembako';
 $active_menu = $active_menu ?? '';
-$role        = strtolower($_SESSION['nama_role'] ?? '');
+$role        = trim(strtolower($_SESSION['nama_role'] ?? ''));
 
 $is_admin  = ($role === 'admin' || $role === 'super admin');
 $is_kasir  = ($role === 'kasir');
-$is_gudang = ($role === 'staff gudang' || $role === 'gudang');
+$is_gudang = ($role === 'staf gudang' || $role === 'staff gudang' || $role === 'gudang');
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -31,9 +31,7 @@ $is_gudang = ($role === 'staff gudang' || $role === 'gudang');
             </div>
 
             <div class="small text-uppercase text-secondary px-2 mb-1">Utama</div>
-            <?php if ($is_admin || $is_kasir): ?>
-                <a href="<?= BASE_URL ?>/index.php" class="nav-link text-white rounded px-2 py-1 mb-1 <?= $active_menu == 'dashboard' ? 'bg-primary' : '' ?>"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
-            <?php endif; ?>
+            <a href="<?= BASE_URL ?>/index.php" class="nav-link text-white rounded px-2 py-1 mb-1 <?= $active_menu == 'dashboard' ? 'bg-primary' : '' ?>"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
             <a href="<?= BASE_URL ?>/stok/index.php" class="nav-link text-white rounded px-2 py-1 mb-1 <?= $active_menu == 'stok' ? 'bg-primary' : '' ?>"><i class="bi bi-boxes me-2"></i>Kartu Stok</a>
 
             <?php if ($is_admin || $is_gudang): ?>
