@@ -21,7 +21,7 @@ USE `uts_pbd`;
 
 -- Dumping structure for table uts_pbd.barang
 CREATE TABLE IF NOT EXISTS `barang` (
-  `idbarang` int NOT NULL,
+  `idbarang` int NOT NULL AUTO_INCREMENT,
   `jenis` char(1) DEFAULT NULL,
   `nama` varchar(45) NOT NULL,
   `idsatuan` int NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `barang` (
   PRIMARY KEY (`idbarang`),
   KEY `fk_barang_satuan` (`idsatuan`),
   CONSTRAINT `fk_barang_satuan` FOREIGN KEY (`idsatuan`) REFERENCES `satuan` (`idsatuan`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.barang: ~5 rows (approximately)
 INSERT INTO `barang` (`idbarang`, `jenis`, `nama`, `idsatuan`, `status`, `harga`) VALUES
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `detail_penerimaan` (
   KEY `fk_detpenerimaan_barang` (`barang_idbarang`),
   CONSTRAINT `fk_detpenerimaan_barang` FOREIGN KEY (`barang_idbarang`) REFERENCES `barang` (`idbarang`),
   CONSTRAINT `fk_detpenerimaan_penerimaan` FOREIGN KEY (`idpenerimaan`) REFERENCES `penerimaan` (`idpenerimaan`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.detail_penerimaan: ~5 rows (approximately)
 INSERT INTO `detail_penerimaan` (`iddetail_penerimaan`, `idpenerimaan`, `barang_idbarang`, `jumlah_terima`, `harga_satuan_terima`, `sub_total_terima`) VALUES
@@ -71,7 +71,12 @@ INSERT INTO `detail_penerimaan` (`iddetail_penerimaan`, `idpenerimaan`, `barang_
 	(12, 12, 4, 3, 18000, 54000),
 	(13, 12, 3, 2, 68000, 136000),
 	(14, 13, 4, 2, 18000, 36000),
-	(15, 13, 3, 8, 68000, 544000);
+	(15, 13, 3, 8, 68000, 544000),
+	(16, 14, 2, 1, 4000, 4000),
+	(17, 15, 2, 1, 4000, 4000),
+	(18, 16, 2, 3, 4000, 12000),
+	(19, 17, 3, 4, 68000, 272000),
+	(20, 18, 3, 6, 68000, 408000);
 
 -- Dumping structure for table uts_pbd.detail_pengadaan
 CREATE TABLE IF NOT EXISTS `detail_pengadaan` (
@@ -86,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `detail_pengadaan` (
   KEY `fk_detpengadaan_pengadaan` (`idpengadaan`),
   CONSTRAINT `fk_detpengadaan_barang` FOREIGN KEY (`idbarang`) REFERENCES `barang` (`idbarang`),
   CONSTRAINT `fk_detpengadaan_pengadaan` FOREIGN KEY (`idpengadaan`) REFERENCES `pengadaan` (`idpengadaan`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.detail_pengadaan: ~4 rows (approximately)
 INSERT INTO `detail_pengadaan` (`iddetail_pengadaan`, `harga_satuan`, `jumlah`, `sub_total`, `idbarang`, `idpengadaan`) VALUES
@@ -101,7 +106,9 @@ INSERT INTO `detail_pengadaan` (`iddetail_pengadaan`, `harga_satuan`, `jumlah`, 
 	(9, 4000, 10, 40000, 2, 9),
 	(10, 4000, 5, 20000, 2, 9),
 	(11, 18000, 5, 90000, 4, 10),
-	(12, 68000, 10, 680000, 3, 10);
+	(12, 68000, 10, 680000, 3, 10),
+	(13, 4000, 5, 20000, 2, 11),
+	(14, 68000, 10, 680000, 3, 12);
 
 -- Dumping structure for table uts_pbd.detail_penjualan
 CREATE TABLE IF NOT EXISTS `detail_penjualan` (
@@ -116,12 +123,14 @@ CREATE TABLE IF NOT EXISTS `detail_penjualan` (
   KEY `fk_detpenjualan_barang` (`idbarang`),
   CONSTRAINT `fk_detpenjualan_barang` FOREIGN KEY (`idbarang`) REFERENCES `barang` (`idbarang`),
   CONSTRAINT `fk_detpenjualan_penjualan` FOREIGN KEY (`penjualan_idpenjualan`) REFERENCES `penjualan` (`idpenjualan`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.detail_penjualan: ~0 rows (approximately)
 INSERT INTO `detail_penjualan` (`iddetail_penjualan`, `harga_satuan`, `jumlah`, `subtotal`, `penjualan_idpenjualan`, `idbarang`) VALUES
 	(1, 4400, 5, 22000, 1, 2),
-	(2, 74800, 2, 149600, 2, 3);
+	(2, 74800, 2, 149600, 2, 3),
+	(3, 74800, 5, 374000, 3, 3),
+	(4, 3850, 4, 15400, 4, 1);
 
 -- Dumping structure for table uts_pbd.detail_retur
 CREATE TABLE IF NOT EXISTS `detail_retur` (
@@ -135,14 +144,16 @@ CREATE TABLE IF NOT EXISTS `detail_retur` (
   KEY `fk_detretur_detpenerimaan` (`iddetail_penerimaan`),
   CONSTRAINT `fk_detretur_detpenerimaan` FOREIGN KEY (`iddetail_penerimaan`) REFERENCES `detail_penerimaan` (`iddetail_penerimaan`),
   CONSTRAINT `fk_detretur_retur` FOREIGN KEY (`idretur`) REFERENCES `retur` (`idretur`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.detail_retur: ~0 rows (approximately)
 INSERT INTO `detail_retur` (`iddetail_retur`, `jumlah`, `alasan`, `idretur`, `iddetail_penerimaan`) VALUES
 	(1, 1, 'kemasan rusak', 1, 14),
 	(2, 5, 'expired', 2, 15),
 	(3, 3, '', 3, 15),
-	(4, 1, '', 4, 14);
+	(4, 1, '', 4, 14),
+	(5, 1, '', 5, 12),
+	(6, 1, '', 5, 13);
 
 -- Dumping structure for function uts_pbd.fn_cek_stok_barang
 DELIMITER //
@@ -162,6 +173,24 @@ BEGIN
 END//
 DELIMITER ;
 
+-- Dumping structure for function uts_pbd.fn_hitung_harga_jual
+DELIMITER //
+CREATE FUNCTION `fn_hitung_harga_jual`(p_harga_pokok INT, p_persen DOUBLE) RETURNS int
+    DETERMINISTIC
+BEGIN
+    RETURN ROUND(p_harga_pokok + (p_harga_pokok * p_persen / 100));
+END//
+DELIMITER ;
+
+-- Dumping structure for function uts_pbd.fn_hitung_ppn
+DELIMITER //
+CREATE FUNCTION `fn_hitung_ppn`(p_subtotal INT) RETURNS int
+    DETERMINISTIC
+BEGIN
+    RETURN ROUND(p_subtotal * 0.11);
+END//
+DELIMITER ;
+
 -- Dumping structure for table uts_pbd.kartu_stok
 CREATE TABLE IF NOT EXISTS `kartu_stok` (
   `idkartu_stok` bigint NOT NULL AUTO_INCREMENT,
@@ -175,7 +204,7 @@ CREATE TABLE IF NOT EXISTS `kartu_stok` (
   PRIMARY KEY (`idkartu_stok`),
   KEY `fk_kartustok_barang` (`idbarang`),
   CONSTRAINT `fk_kartustok_barang` FOREIGN KEY (`idbarang`) REFERENCES `barang` (`idbarang`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.kartu_stok: ~5 rows (approximately)
 INSERT INTO `kartu_stok` (`idkartu_stok`, `jenis_transaksi`, `masuk`, `keluar`, `stock`, `created_at`, `idtransaksi`, `idbarang`) VALUES
@@ -196,11 +225,20 @@ INSERT INTO `kartu_stok` (`idkartu_stok`, `jenis_transaksi`, `masuk`, `keluar`, 
 	(15, 'M', 8, 0, 16, '2026-11-23 15:45:51', 13, 3),
 	(16, 'K', 0, 1, 4, '2026-11-23 15:52:36', 4, 4),
 	(17, 'K', 0, 5, 20, '2026-11-23 16:00:02', 1, 2),
-	(18, 'K', 0, 2, 14, '2026-11-23 16:01:15', 2, 3);
+	(18, 'K', 0, 2, 14, '2026-11-23 16:01:15', 2, 3),
+	(19, 'K', 0, 1, 3, '2026-11-24 02:58:25', 5, 4),
+	(20, 'K', 0, 1, 13, '2026-11-24 02:58:25', 5, 3),
+	(21, 'K', 0, 5, 8, '2026-11-24 02:59:11', 3, 3),
+	(22, 'M', 1, 0, 21, '2026-11-24 03:09:35', 14, 2),
+	(23, 'M', 1, 0, 22, '2026-11-24 03:09:40', 15, 2),
+	(24, 'M', 3, 0, 25, '2026-11-24 03:09:44', 16, 2),
+	(25, 'K', 0, 4, 30, '2026-11-24 03:10:17', 4, 1),
+	(26, 'M', 4, 0, 12, '2026-11-24 03:11:06', 17, 3),
+	(27, 'M', 6, 0, 18, '2026-11-24 03:11:16', 18, 3);
 
 -- Dumping structure for table uts_pbd.margin_penjualan
 CREATE TABLE IF NOT EXISTS `margin_penjualan` (
-  `idmargin_penjualan` int NOT NULL,
+  `idmargin_penjualan` int NOT NULL AUTO_INCREMENT,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `persen` double DEFAULT NULL,
   `status` tinyint DEFAULT NULL,
@@ -209,7 +247,7 @@ CREATE TABLE IF NOT EXISTS `margin_penjualan` (
   PRIMARY KEY (`idmargin_penjualan`),
   KEY `fk_margin_user` (`iduser`),
   CONSTRAINT `fk_margin_user` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.margin_penjualan: ~5 rows (approximately)
 INSERT INTO `margin_penjualan` (`idmargin_penjualan`, `created_at`, `persen`, `status`, `iduser`, `updated_at`) VALUES
@@ -231,7 +269,7 @@ CREATE TABLE IF NOT EXISTS `penerimaan` (
   KEY `fk_penerimaan_user` (`iduser`),
   CONSTRAINT `fk_penerimaan_pengadaan` FOREIGN KEY (`idpengadaan`) REFERENCES `pengadaan` (`idpengadaan`),
   CONSTRAINT `fk_penerimaan_user` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.penerimaan: ~4 rows (approximately)
 INSERT INTO `penerimaan` (`idpenerimaan`, `created_at`, `status`, `idpengadaan`, `iduser`) VALUES
@@ -247,7 +285,12 @@ INSERT INTO `penerimaan` (`idpenerimaan`, `created_at`, `status`, `idpengadaan`,
 	(10, '2026-11-23 15:32:10', 'S', 9, 1),
 	(11, '2026-11-23 15:39:06', 'S', 9, 1),
 	(12, '2026-11-23 15:45:41', 'S', 10, 1),
-	(13, '2026-11-23 15:45:51', 'S', 10, 1);
+	(13, '2026-11-23 15:45:51', 'S', 10, 1),
+	(14, '2026-11-24 03:09:35', 'S', 11, 1),
+	(15, '2026-11-24 03:09:40', 'S', 11, 1),
+	(16, '2026-11-24 03:09:44', 'S', 11, 1),
+	(17, '2026-11-24 03:11:06', 'S', 12, 3),
+	(18, '2026-11-24 03:11:16', 'S', 12, 3);
 
 -- Dumping structure for table uts_pbd.pengadaan
 CREATE TABLE IF NOT EXISTS `pengadaan` (
@@ -264,7 +307,7 @@ CREATE TABLE IF NOT EXISTS `pengadaan` (
   KEY `fk_pengadaan_vendor` (`vendor_idvendor`),
   CONSTRAINT `fk_pengadaan_user` FOREIGN KEY (`user_iduser`) REFERENCES `user` (`iduser`),
   CONSTRAINT `fk_pengadaan_vendor` FOREIGN KEY (`vendor_idvendor`) REFERENCES `vendor` (`idvendor`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.pengadaan: ~4 rows (approximately)
 INSERT INTO `pengadaan` (`idpengadaan`, `timestamp`, `user_iduser`, `status`, `vendor_idvendor`, `subtotal_nilai`, `ppn`, `total_nilai`) VALUES
@@ -277,7 +320,9 @@ INSERT INTO `pengadaan` (`idpengadaan`, `timestamp`, `user_iduser`, `status`, `v
 	(7, '2026-11-23 14:26:29', 1, 'S', 1, 28000, 2800, 30800),
 	(8, '2026-11-23 15:19:16', 1, 'S', 1, 35000, 3500, 38500),
 	(9, '2026-11-23 15:31:23', 1, 'S', 2, 60000, 6600, 66600),
-	(10, '2026-11-23 15:43:11', 1, 'S', 3, 770000, 84700, 854700);
+	(10, '2026-11-23 15:43:11', 1, 'S', 3, 770000, 84700, 854700),
+	(11, '2026-11-24 03:09:28', 1, 'S', 2, 20000, 2200, 22200),
+	(12, '2026-11-24 03:11:00', 3, 'S', 1, 680000, 74800, 754800);
 
 -- Dumping structure for table uts_pbd.penjualan
 CREATE TABLE IF NOT EXISTS `penjualan` (
@@ -293,12 +338,14 @@ CREATE TABLE IF NOT EXISTS `penjualan` (
   KEY `fk_penjualan_margin` (`idmargin_penjualan`),
   CONSTRAINT `fk_penjualan_margin` FOREIGN KEY (`idmargin_penjualan`) REFERENCES `margin_penjualan` (`idmargin_penjualan`),
   CONSTRAINT `fk_penjualan_user` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.penjualan: ~0 rows (approximately)
 INSERT INTO `penjualan` (`idpenjualan`, `created_at`, `subtotal_nilai`, `ppn`, `total_nilai`, `iduser`, `idmargin_penjualan`) VALUES
 	(1, '2026-11-23 16:00:02', 22000, 2420, 24420, 1, 1),
-	(2, '2026-11-23 16:01:15', 149600, 16456, 166056, 2, 1);
+	(2, '2026-11-23 16:01:15', 149600, 16456, 166056, 2, 1),
+	(3, '2026-11-24 02:59:11', 374000, 41140, 415140, 2, 1),
+	(4, '2026-11-24 03:10:17', 15400, 1694, 17094, 2, 1);
 
 -- Dumping structure for table uts_pbd.retur
 CREATE TABLE IF NOT EXISTS `retur` (
@@ -311,21 +358,22 @@ CREATE TABLE IF NOT EXISTS `retur` (
   KEY `fk_retur_user` (`iduser`),
   CONSTRAINT `fk_retur_penerimaan` FOREIGN KEY (`idpenerimaan`) REFERENCES `penerimaan` (`idpenerimaan`),
   CONSTRAINT `fk_retur_user` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.retur: ~0 rows (approximately)
 INSERT INTO `retur` (`idretur`, `created_at`, `idpenerimaan`, `iduser`) VALUES
 	(1, '2026-11-23 15:48:49', 13, 1),
 	(2, '2026-11-23 15:50:19', 13, 1),
 	(3, '2026-11-23 15:51:12', 13, 1),
-	(4, '2026-11-23 15:52:36', 13, 1);
+	(4, '2026-11-23 15:52:36', 13, 1),
+	(5, '2026-11-24 02:58:25', 12, 3);
 
 -- Dumping structure for table uts_pbd.role
 CREATE TABLE IF NOT EXISTS `role` (
-  `idrole` int NOT NULL,
+  `idrole` int NOT NULL AUTO_INCREMENT,
   `nama_role` varchar(100) NOT NULL,
   PRIMARY KEY (`idrole`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.role: ~3 rows (approximately)
 INSERT INTO `role` (`idrole`, `nama_role`) VALUES
@@ -335,11 +383,11 @@ INSERT INTO `role` (`idrole`, `nama_role`) VALUES
 
 -- Dumping structure for table uts_pbd.satuan
 CREATE TABLE IF NOT EXISTS `satuan` (
-  `idsatuan` int NOT NULL,
+  `idsatuan` int NOT NULL AUTO_INCREMENT,
   `nama_satuan` varchar(45) NOT NULL,
   `status` tinyint DEFAULT NULL,
   PRIMARY KEY (`idsatuan`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.satuan: ~4 rows (approximately)
 INSERT INTO `satuan` (`idsatuan`, `nama_satuan`, `status`) VALUES
@@ -385,16 +433,41 @@ BEGIN
 END//
 DELIMITER ;
 
+-- Dumping structure for procedure uts_pbd.sp_update_status_pengadaan
+DELIMITER //
+CREATE PROCEDURE `sp_update_status_pengadaan`(IN p_idpengadaan INT)
+BEGIN
+    DECLARE v_dipesan INT DEFAULT 0;
+    DECLARE v_diterima INT DEFAULT 0;
+
+    SELECT COALESCE(SUM(jumlah), 0) INTO v_dipesan
+    FROM detail_pengadaan
+    WHERE idpengadaan = p_idpengadaan;
+
+    SELECT COALESCE(SUM(dpr.jumlah_terima), 0) INTO v_diterima
+    FROM detail_penerimaan dpr
+    JOIN penerimaan pr ON dpr.idpenerimaan = pr.idpenerimaan
+    WHERE pr.idpengadaan = p_idpengadaan;
+
+    IF v_dipesan > 0 AND v_diterima >= v_dipesan THEN
+        UPDATE pengadaan SET status = 'S' WHERE idpengadaan = p_idpengadaan;
+        UPDATE penerimaan SET status = 'S' WHERE idpengadaan = p_idpengadaan;
+    ELSE
+        UPDATE pengadaan SET status = 'D' WHERE idpengadaan = p_idpengadaan;
+    END IF;
+END//
+DELIMITER ;
+
 -- Dumping structure for table uts_pbd.user
 CREATE TABLE IF NOT EXISTS `user` (
-  `iduser` int NOT NULL,
+  `iduser` int NOT NULL AUTO_INCREMENT,
   `username` varchar(45) NOT NULL,
   `password` varchar(100) NOT NULL,
   `idrole` int NOT NULL,
   PRIMARY KEY (`iduser`),
   KEY `fk_user_role` (`idrole`),
   CONSTRAINT `fk_user_role` FOREIGN KEY (`idrole`) REFERENCES `role` (`idrole`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.user: ~3 rows (approximately)
 INSERT INTO `user` (`iduser`, `username`, `password`, `idrole`) VALUES
@@ -404,12 +477,12 @@ INSERT INTO `user` (`iduser`, `username`, `password`, `idrole`) VALUES
 
 -- Dumping structure for table uts_pbd.vendor
 CREATE TABLE IF NOT EXISTS `vendor` (
-  `idvendor` int NOT NULL,
+  `idvendor` int NOT NULL AUTO_INCREMENT,
   `nama_vendor` varchar(100) NOT NULL,
   `badan_hukum` char(1) DEFAULT NULL,
   `status` char(1) DEFAULT NULL,
   PRIMARY KEY (`idvendor`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table uts_pbd.vendor: ~3 rows (approximately)
 INSERT INTO `vendor` (`idvendor`, `nama_vendor`, `badan_hukum`, `status`) VALUES
@@ -653,6 +726,51 @@ CREATE TRIGGER `trg_after_insert_detail_penerimaan` AFTER INSERT ON `detail_pene
 
     INSERT INTO kartu_stok (jenis_transaksi, masuk, keluar, stock, created_at, idtransaksi, idbarang)
     VALUES ('M', NEW.jumlah_terima, 0, v_stok_akhir + NEW.jumlah_terima, NOW(), NEW.idpenerimaan, NEW.barang_idbarang);
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
+
+-- Dumping structure for trigger uts_pbd.trg_after_insert_detail_penjualan
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `trg_after_insert_detail_penjualan` AFTER INSERT ON `detail_penjualan` FOR EACH ROW BEGIN
+    DECLARE v_stok_akhir INT DEFAULT 0;
+
+    SELECT COALESCE(stock, 0) INTO v_stok_akhir
+    FROM kartu_stok
+    WHERE idbarang = NEW.idbarang
+    ORDER BY idkartu_stok DESC
+    LIMIT 1;
+
+    INSERT INTO kartu_stok (jenis_transaksi, masuk, keluar, stock, created_at, idtransaksi, idbarang)
+    VALUES ('K', 0, NEW.jumlah, GREATEST(0, v_stok_akhir - NEW.jumlah), NOW(), NEW.penjualan_idpenjualan, NEW.idbarang);
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
+
+-- Dumping structure for trigger uts_pbd.trg_after_insert_detail_retur
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `trg_after_insert_detail_retur` AFTER INSERT ON `detail_retur` FOR EACH ROW BEGIN
+    DECLARE v_idbarang INT;
+    DECLARE v_stok_akhir INT DEFAULT 0;
+
+    -- 1. Ambil idbarang dari detail_penerimaan
+    SELECT barang_idbarang INTO v_idbarang
+    FROM detail_penerimaan
+    WHERE iddetail_penerimaan = NEW.iddetail_penerimaan
+    LIMIT 1;
+
+    -- 2. Ambil stok terakhir barang tersebut di kartu_stok
+    SELECT COALESCE(stock, 0) INTO v_stok_akhir
+    FROM kartu_stok
+    WHERE idbarang = v_idbarang
+    ORDER BY idkartu_stok DESC
+    LIMIT 1;
+
+    -- 3. Catat mutasi keluar (K) ke kartu_stok
+    INSERT INTO kartu_stok (jenis_transaksi, masuk, keluar, stock, created_at, idtransaksi, idbarang)
+    VALUES ('K', 0, NEW.jumlah, GREATEST(0, v_stok_akhir - NEW.jumlah), NOW(), NEW.idretur, v_idbarang);
 END//
 DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
